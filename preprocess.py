@@ -9,10 +9,8 @@ import numpy as np
 import re
 import spacy
 import os
-import cupy
 from unidecode import unidecode
 
-nlp = spacy.load("en_core_web_sm")
 
 # All datasets are downloaded from HuggingFace
 
@@ -37,9 +35,11 @@ def Regularization(text):
 
 # Lemmatization
 def Lemmatization(text):
-    doc = nlp(text)
-    lemmatized_text = " ".join([token.lemma_ for token in doc])
-    return lemmatized_text
+    lemmatized_texts = []
+    for doc in nlp.pipe(text, batch_size=64, n_process=12):
+        lemmatized_text = " ".join([token.lemma_ for token in doc])
+        lemmatized_texts.append(lemmatized_text)
+    return lemmatized_texts
 
 # Write processed dataset to a new file
 def WriteDataset(data, file_name):
@@ -53,28 +53,29 @@ def Preprocess(dataset, input_file, output_file):
         data = LoadDataset(input_file)
         data['sentence'] = data['sentence'].apply(Regularization)
         print(data.head())
-        data['sentence'] = data['sentence'].apply(Lemmatization)
+        data['sentence'] = Lemmatization(data['sentence'].tolist())
         WriteDataset(data, output_file) 
     elif dataset == 'imdb' or 'yelp':
         data = LoadDataset(input_file)
         if dataset == 'yelp':
-            sample_size = min(64000, len(data))
-            data = data.sample(n=sample_size, random_state=42)
+            sample_size = len(data)
+            # data = data.sample(n=sample_size, random_state=42)
         data['text'] = data['text'].apply(Regularization)
         print(data.head())
-        data['text'] = data['text'].apply(Lemmatization)
+        data['text'] = Lemmatization(data['text'].tolist())
         WriteDataset(data, output_file)        
     print(data.head()) 
 
-    
-# SST2: https://huggingface.co/datasets/stanfordnlp/sst2
-Preprocess('sst2', './sst2/data/train-00000-of-00001.parquet', './sst2_process/train.parquet')
-Preprocess('sst2', './sst2/data/validation-00000-of-00001.parquet', './sst2_process/validation.parquet')
-Preprocess('sst2', './sst2/data/test-00000-of-00001.parquet', './sst2_process/test.parquet')
-# # IMDB: https://huggingface.co/datasets/stanfordnlp/imdb
-Preprocess('imdb', './imdb/plain_text/train-00000-of-00001.parquet', './imdb_process/train.parquet')
-Preprocess('imdb', './imdb/plain_text/test-00000-of-00001.parquet', './imdb_process/test.parquet')
-Preprocess('imdb', './imdb/plain_text/unsupervised-00000-of-00001.parquet', './imdb_process/unsupervised.parquet')
-# YELP: https://huggingface.co/datasets/contemmcm/yelp_review
-Preprocess('yelp', './yelp_review_full/yelp_review_full/train-00000-of-00001.parquet', './yelp_process/train.parquet')
-Preprocess('yelp', './yelp_review_full/yelp_review_full/test-00000-of-00001.parquet', './yelp_process/test.parquet')
+if __name__ == '__main__':    
+    nlp = spacy.load("en_core_web_sm")
+    # SST2: https://huggingface.co/datasets/stanfordnlp/sst2
+    Preprocess('sst2', './sst2/data/train-00000-of-00001.parquet', './sst2_process/train.parquet')
+    Preprocess('sst2', './sst2/data/validation-00000-of-00001.parquet', './sst2_process/validation.parquet')
+    Preprocess('sst2', './sst2/data/test-00000-of-00001.parquet', './sst2_process/test.parquet')
+    # IMDB: https://huggingface.co/datasets/stanfordnlp/imdb
+    Preprocess('imdb', './imdb/plain_text/train-00000-of-00001.parquet', './imdb_process/train.parquet')
+    Preprocess('imdb', './imdb/plain_text/test-00000-of-00001.parquet', './imdb_process/test.parquet')
+    Preprocess('imdb', './imdb/plain_text/unsupervised-00000-of-00001.parquet', './imdb_process/unsupervised.parquet')
+    YELP: https://huggingface.co/datasets/contemmcm/yelp_review
+    Preprocess('yelp', './yelp_review_full/yelp_review_full/train-00000-of-00001.parquet', './yelp_process/train.parquet')
+    Preprocess('yelp', './yelp_review_full/yelp_review_full/test-00000-of-00001.parquet', './yelp_process/test.parquet')
