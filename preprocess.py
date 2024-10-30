@@ -68,14 +68,14 @@ def Preprocess(dataset, input_file, output_file):
 
 if __name__ == '__main__':    
     nlp = spacy.load("en_core_web_sm")
-    # SST2: https://huggingface.co/datasets/stanfordnlp/sst2
-    Preprocess('sst2', './sst2/data/train-00000-of-00001.parquet', './sst2_process/train.parquet')
-    Preprocess('sst2', './sst2/data/validation-00000-of-00001.parquet', './sst2_process/validation.parquet')
-    Preprocess('sst2', './sst2/data/test-00000-of-00001.parquet', './sst2_process/test.parquet')
-    # IMDB: https://huggingface.co/datasets/stanfordnlp/imdb
-    Preprocess('imdb', './imdb/plain_text/train-00000-of-00001.parquet', './imdb_process/train.parquet')
-    Preprocess('imdb', './imdb/plain_text/test-00000-of-00001.parquet', './imdb_process/test.parquet')
-    Preprocess('imdb', './imdb/plain_text/unsupervised-00000-of-00001.parquet', './imdb_process/unsupervised.parquet')
-    YELP: https://huggingface.co/datasets/contemmcm/yelp_review
+    # # SST2: https://huggingface.co/datasets/stanfordnlp/sst2
+    # Preprocess('sst2', './sst2/data/train-00000-of-00001.parquet', './sst2_process/train.parquet')
+    # Preprocess('sst2', './sst2/data/validation-00000-of-00001.parquet', './sst2_process/validation.parquet')
+    # Preprocess('sst2', './sst2/data/test-00000-of-00001.parquet', './sst2_process/test.parquet')
+    # # IMDB: https://huggingface.co/datasets/stanfordnlp/imdb
+    # Preprocess('imdb', './imdb/plain_text/train-00000-of-00001.parquet', './imdb_process/train.parquet')
+    # Preprocess('imdb', './imdb/plain_text/test-00000-of-00001.parquet', './imdb_process/test.parquet')
+    # Preprocess('imdb', './imdb/plain_text/unsupervised-00000-of-00001.parquet', './imdb_process/unsupervised.parquet')
+    # YELP: https://huggingface.co/datasets/contemmcm/yelp_review
     Preprocess('yelp', './yelp_review_full/yelp_review_full/train-00000-of-00001.parquet', './yelp_process/train.parquet')
     Preprocess('yelp', './yelp_review_full/yelp_review_full/test-00000-of-00001.parquet', './yelp_process/test.parquet')
